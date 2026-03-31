@@ -11,14 +11,23 @@
 </head>
 <body>
     <h1>Nerd&Geek Hub</h1>
+    
     <div class="container-login">
-        <span class="titulo-login">Login</span>
-        
-        <input placeholder="Usuário" id="loginUsername" type="text"/> <br>
-        <input placeholder="Senha" id="loginPassword" type="password"/>
-        <button>Salvar</button>
+        <form id='formLogin'>
+            <label for="user">Usuário:</label>
+            <input type="text" id="userLogin" placeholder="Usuário" required>
+
+            <label for="password">Senha:</label>
+            <input type="password" id="passwordLogin" placeholder="Senha" required>
+
+            <button type="submit">Entrar</button>
+
+        </form>
+
+        <p id="errorLoginMessage" style="color:red"></p>
     </div>
     
     <div id="resultados"></div>
+    <script src="script.js"></script>
 </body>
 </html>
