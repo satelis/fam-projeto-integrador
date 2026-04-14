@@ -4,7 +4,7 @@
     color: white;
 }
 
-h1 {
+.titulo {
     text-align: center;
     font-family: "Bitcount Grid Double Ink", system-ui;
     font-size: 100px;
