@@ -1,24 +1,77 @@
 const formulario = document.getElementById('formLogin');
+const formularioRegister = document.getElementById('formRegister')
 const msgErro = document.getElementById('errorLoginMessage');
 
-// ##TODO: script de criação de usuario dentro do banco de dados, com id por usuario
 
-//função ao dar submit no login
-formulario.addEventListener('submit', function(event) {
+//função fazer login
+formulario.addEventListener('submit', async function(event) {
     //impede que a pagina so recarregue
     event.preventDefault();
     
     const user = document.getElementById('userLogin').value;
     const pass = document.getElementById('passwordLogin').value;
+    
+    try {
+        const resposta = await fetch ('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json' },
+            body: JSON.stringify({ username: user, senha: pass })
+        });
 
-    if (user === "adm" && pass === '123') {
-        window.location.href='logintest.html';
-    }
-    else {
-        msgErro.innerText="Usuário ou senha incorretos.";
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+            //guarda no local storage o id pra usar no proprio site
+            localStorage.setItem('usuarioID', dados.id);
+            localStorage.setItem('usuarioNick', dados.username);
+
+            alert(`Bem vindo, ${dados.username}!`);
+            // ###TODO MUDAR TELA DE LOGIN 
+            window.location.href = 'logintest.html';
+        } else {
+            msgErro.innerText = dados.mensagem;
+        }
+    } catch (err) {
+        msgErro.innerText = "Servidor desligado.";
     }
 });
 
+//função cadastro
+formRegister.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const user = document.getElementById('userRegister').value;
+    const pass = document.getElementById('passwordRegister').value;
+    const passConfirm = document.getElementById('passwordRegisterConfirm').value;
+ 
+    //valida se as senhas são iguais
+    if (pass != passConfirm) {
+        alert("Senhas diferem!");
+        return;
+    }
+
+    //enviando pro banco de dados
+    try {
+        const resposta = await fetch('http://localhost:3000/cadastrar', {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json' },
+            body: JSON.stringify({ username: user, senha: pass })
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            alert("Usuário criado com sucesso, ID: " + dados.id);
+            alternarTela();
+        } else {
+            alert("Erro ao cadastrar");
+        }
+    } catch (err) {
+        alert("Servidor do Node está desligado.");
+    }
+});
+
+//alternar telas de login
 function alternarTela() {
     //limpa erro
     document.getElementById('errorLoginMessage').innerText = "";
