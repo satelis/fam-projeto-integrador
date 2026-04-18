@@ -1,5 +1,10 @@
+//importa script de conexão com o sql
+const db = require('./db');
+
 const formulario = document.getElementById('formLogin');
 const msgErro = document.getElementById('errorLoginMessage');
+
+// ##TODO: script de criação de usuario dentro do banco de dados, com id por usuario
 
 //função ao dar submit no login
 formulario.addEventListener('submit', function(event) {
@@ -10,7 +15,6 @@ formulario.addEventListener('submit', function(event) {
     const pass = document.getElementById('passwordLogin').value;
 
     if (user === "adm" && pass === '123') {
-        console.log("omgg");
         window.location.href='logintest.html';
     }
     else {
