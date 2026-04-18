@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
     res.send("Servidor online.");
 });
 
+//função de cadastro
 app.post('/usuarios', (req, res) => {
     const { username, senha } = req.body;
     const sql = "INSERT INTO usuarios (username, senha) VALUES (?, ?)";

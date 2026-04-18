@@ -1,7 +1,5 @@
 //conexao com o .env que está na pasta raiz
 require('dotenv').config({ path: '../.env' });
-console.log("Arquivo .env carregado? ", process.env.DB_USER ? "SIM" : NÃO);
-console.log("arquivo lido", process.env.DB_USER);
 //conexão com o banco de dados
 const mysql = require('mysql2');
 

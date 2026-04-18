@@ -12,7 +12,9 @@
 <body>
     <h1 class="titulo">GeekHub</h1>
     
-    <div class="container-login">
+    <div id="login-box" class="container-login" style="display: block;">
+
+        <label>Login</label>
         <form id='formLogin'>
             <label for="user">Usuário:</label>
             <input type="text" id="userLogin" placeholder="Usuário" required>
@@ -25,6 +27,28 @@
         </form>
 
         <p id="errorLoginMessage" style="color:red"></p>
+
+    </div>
+    
+    
+    <div id="register-box" class="container-login" style="display: none;">
+        
+        <label>Cadastrar</label>
+        <form id='formRegister'>
+            <label for="user">Nome de usuário:</label>
+            <input type="text" id="userRegister" placeholder="Usuário" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="passwordRegister" placeholder="Senha" required>
+            
+            <button type="submit">Cadastrar</button>
+            
+        </form>
+    </div>
+    
+    <div id="box-switch">
+        <label for="sign-login-switch">Novo por aqui?</label> <br>
+        <button onclick="alternarTela()">Cadastre-se</button>
     </div>
     
     <div class="about">
