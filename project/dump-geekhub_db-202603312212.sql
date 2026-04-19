@@ -80,7 +80,6 @@
     `id` int NOT NULL AUTO_INCREMENT,
     `username` varchar(50) NOT NULL,
     `senha` varchar(255) NOT NULL,
-    `email` varchar(100) DEFAULT NULL,
     `data_cadastro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `username` (`username`)

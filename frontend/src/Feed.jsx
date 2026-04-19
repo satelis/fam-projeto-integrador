@@ -1,0 +1,259 @@
+import { useState } from 'react';
+
+export default function Feed(props) {
+  const [reviews, setReviews] = useState([
+    { 
+      id: 1, 
+      usuario: "GamerBR", 
+      categoria: "Jogos", 
+      midia: "Counter-Strike 2",
+      imagem: "", 
+      nota: 8, 
+      texto: "A fumaça nova mudou o meta, mas o FPS cai." 
+    },
+    {
+        id: 2,
+        usuario: "Ravenouu",
+        categoria: "Séries",
+        midia: "Xo, Kitty",
+        imagem: "",
+        nota: 9,
+        texto: "Amei o romance entre a Kitty e o Min Ho"
+    },
+  ]);
+
+  const [categoria, setCategoria] = useState('Animes');
+  const [busca, setBusca] = useState('');
+  const [resultados, setResultados] = useState([]); 
+  const [midiaSelecionada, setMidiaSelecionada] = useState('');
+  
+  // guarda a imagem que o usuário escolheu ao clicar
+  const [imagemSelecionada, setImagemSelecionada] = useState('');
+  
+  const [nota, setNota] = useState('');
+  const [texto, setTexto] = useState('');
+
+  const fazerLogout = () => {
+    // Limpa a memória do navegador para o usuário não ficar salvo
+    localStorage.removeItem('usuarioNick');
+    localStorage.removeItem('usuarioID');
+    
+    // Avisa o App.jsx para mudar a tela para 'login'
+    props.onSair();
+  };
+
+  const CHAVE_TMDB = "b86652bc36a0beb002d68ac4bdd093ba"; 
+
+  const buscarMidia = async (termoDigitado) => {
+    setBusca(termoDigitado);
+    setMidiaSelecionada(''); 
+    setImagemSelecionada('');
+
+    if (termoDigitado.length < 3) {
+      setResultados([]); 
+      return;
+    }
+
+    // --- BUSCA DE ANIMES (Jikan API) ---
+    if (categoria === 'Animes') {
+      try {
+        const resposta = await fetch(`https://api.jikan.moe/v4/anime?q=${termoDigitado}&limit=5`);
+        const dados = await resposta.json();
+        
+        setResultados(dados.data.map(anime => ({
+          titulo: anime.title,
+          imagem: anime.images?.jpg?.image_url || "" 
+        })));
+      } catch (erro) {
+        console.error("Erro anime:", erro);
+      }
+    } 
+    // --- BUSCA DE SÉRIES (TVmaze API) ---
+    else if (categoria === 'Séries') {
+      try {
+        const resposta = await fetch(`https://api.tvmaze.com/search/shows?q=${termoDigitado}`);
+        const dados = await resposta.json();
+        
+        setResultados(dados.slice(0, 5).map(item => ({
+          titulo: item.show.name,
+          imagem: item.show.image ? item.show.image.medium : "" 
+        })));
+      } catch (erro) {
+        console.error("Erro série:", erro);
+      }
+    } 
+    // --- BUSCA DE FILMES (TMDB API) ---
+    else if (categoria === 'Filmes') {
+      try {
+        // passamos a api_key na URL e pedimos os dados em português
+        const resposta = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${CHAVE_TMDB}&query=${termoDigitado}&language=pt-BR`);
+        const dados = await resposta.json();
+        
+        // O TMDB devolve as capas só com o final do link. Precisamos colar essa base URL antes:
+        const BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+
+        setResultados(dados.results.slice(0, 5).map(filme => ({
+          titulo: filme.title,
+          // Se tiver capa, junta a URL base com o pedaço que a API mandou
+          imagem: filme.poster_path ? `${BASE_IMAGE_URL}${filme.poster_path}` : "" 
+        })));
+      } catch (erro) {
+        console.error("Erro filme:", erro);
+      }
+    }
+    // --- BUSCA DE JOGOS (CheapShark API) ---
+    else if (categoria === 'Jogos') {
+      try {
+        // Usamos a API pública do CheapShark
+        const resposta = await fetch(`https://www.cheapshark.com/api/1.0/games?title=${termoDigitado}`);
+        const dados = await resposta.json();
+        
+        // O CheapShark devolve o nome no 'external' e a imagem no 'thumb'
+        setResultados(dados.slice(0, 5).map(jogo => ({
+          titulo: jogo.external,
+          imagem: jogo.thumb || "" 
+        })));
+      } catch (erro) {
+        console.error("Erro jogo:", erro);
+      }
+    }
+  };
+
+  const postarReview = (evento) => {
+    evento.preventDefault();
+
+    if (!midiaSelecionada) {
+      alert("Selecione uma mídia da lista de buscas antes de postar!");
+      return;
+    }
+
+    const novaReview = {
+      id: Date.now(), 
+      usuario: localStorage.getItem('usuarioNick') || "Você", 
+      categoria: categoria,
+      midia: midiaSelecionada,
+      // Passamos a imagem selecionada para dentro do post
+      imagem: imagemSelecionada, 
+      nota: nota,
+      texto: texto
+    };
+
+    setReviews([novaReview, ...reviews]);
+
+    // Limpa tudo após postar
+    setBusca('');
+    setResultados([]);
+    setMidiaSelecionada('');
+    setImagemSelecionada('');
+    setNota('');
+    setTexto('');
+  };
+
+  return (
+    <div className="feed-container" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+      
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+        <button 
+          onClick={fazerLogout} 
+          style={{ padding: '8px 15px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+        >
+          Sair da Conta
+        </button>
+      </div>
+
+      <div style={{ border: '1px solid #444', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+        <h3>Escrever uma Avaliação</h3>
+        
+        <form onSubmit={postarReview} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          
+          <select value={categoria} onChange={(e) => setCategoria(e.target.value)} style={{ padding: '8px' }}>
+            <option value="Animes">Animes</option>
+            <option value="Jogos">Jogos</option>
+            <option value="Filmes">Filmes</option>
+            <option value="Séries">Séries</option>
+          </select>
+
+          <input 
+            type="text" 
+            placeholder={`Buscar ${categoria}...`}
+            value={busca}
+            onChange={(e) => buscarMidia(e.target.value)}
+            style={{ padding: '8px' }}
+          />
+
+          {resultados.length > 0 && !midiaSelecionada && (
+            <ul style={{ background: '#eee', color: '#000', listStyle: 'none', padding: '0', marginTop: '-10px', borderRadius: '4px', overflow: 'hidden' }}>
+              {resultados.map((item, index) => (
+                <li 
+                  key={index} 
+                  style={{ cursor: 'pointer', padding: '10px', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'center', gap: '10px' }}
+                  onClick={() => {
+                    // Ao clicar, guardamos tanto o título quanto a imagem nos estados
+                    setMidiaSelecionada(item.titulo);
+                    setImagemSelecionada(item.imagem);
+                    setBusca(item.titulo); 
+                    setResultados([]); 
+                  }}
+                >
+                  {/* Pequena miniatura da imagem na lista de busca */}
+                  {item.imagem ? (
+                    <img src={item.imagem} alt={item.titulo} style={{ width: '40px', height: '55px', objectFit: 'cover', borderRadius: '4px' }} />
+                  ) : (
+                    <div style={{ width: '40px', height: '55px', background: '#ccc', borderRadius: '4px' }}></div>
+                  )}
+                  {item.titulo}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <input 
+              type="number" 
+              placeholder="Nota (0 a 10)" 
+              min="0" max="10" 
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              required
+              style={{ width: '120px', padding: '8px' }}
+            />
+          </div>
+
+          <textarea 
+            placeholder="O que você achou?" 
+            rows="4" 
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            required
+            style={{ padding: '8px' }}
+          />
+
+          <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            Publicar Review
+          </button>
+        </form>
+      </div>
+
+      <h2>Últimas Avaliações</h2>
+      {reviews.map((review) => (
+        <div key={review.id} style={{ border: '1px solid #ccc', margin: '15px 0', padding: '15px', borderRadius: '8px', display: 'flex', gap: '20px' }}>
+          
+          {/* Exibindo a capa no post final, se ela existir */}
+          {review.imagem && (
+            <img src={review.imagem} alt={review.midia} style={{ width: '100px', height: '140px', objectFit: 'cover', borderRadius: '8px' }} />
+          )}
+
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: '0 0 10px 0' }}>
+              {review.usuario} avaliou o {review.categoria.slice(0, -1)}: <span style={{ color: '#007bff' }}>{review.midia}</span>
+            </h4>
+            <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
+            <p style={{ margin: '0' }}>{review.texto}</p>
+          </div>
+          
+        </div>
+      ))}
+
+    </div>
+  );
+}

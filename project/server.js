@@ -43,6 +43,7 @@ app.post('/cadastrar', (req, res) => {
     db.query(sql, [username, senha], (err, result) => {
         //tratando erro
         if (err) {
+            console.log("ERRO DO MYSQL:", err.message); // <-- O detetive entra aqui
             return res.status(500).json({ erro: err.message });
         }
         //retorna id do user
