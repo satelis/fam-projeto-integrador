@@ -42,7 +42,8 @@ export default function Feed(props) {
     props.onSair();
   };
 
-  const CHAVE_TMDB = "b86652bc36a0beb002d68ac4bdd093ba"; 
+  const CHAVE_TMDB = "b86652bc36a0beb002d68ac4bdd093ba";
+  const CHAVE_RAWG = "ef4e86db37e54732884687170f67a3ec";
 
   const buscarMidia = async (termoDigitado) => {
     setBusca(termoDigitado);
@@ -101,17 +102,15 @@ export default function Feed(props) {
         console.error("Erro filme:", erro);
       }
     }
-    // --- BUSCA DE JOGOS (CheapShark API) ---
+    // --- BUSCA DE JOGOS (RAWG API) ---
     else if (categoria === 'Jogos') {
       try {
-        // Usamos a API pública do CheapShark
-        const resposta = await fetch(`https://www.cheapshark.com/api/1.0/games?title=${termoDigitado}`);
+        const resposta = await fetch(`https://api.rawg.io/api/games?key=${CHAVE_RAWG}&search=${termoDigitado}&page_size=5`);
         const dados = await resposta.json();
         
-        // O CheapShark devolve o nome no 'external' e a imagem no 'thumb'
-        setResultados(dados.slice(0, 5).map(jogo => ({
-          titulo: jogo.external,
-          imagem: jogo.thumb || "" 
+        setResultados(dados.results.map(jogo => ({
+          titulo: jogo.name,
+          imagem: jogo.background_image || "" 
         })));
       } catch (erro) {
         console.error("Erro jogo:", erro);
