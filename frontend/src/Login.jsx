@@ -6,17 +6,31 @@ export default function Login(props) {
     const [senha, setSenha] = useState('');
     const [erro, setErro] = useState('');
 
-    const fazerLogin = (evento) => {
-        evento.preventDefault(); 
-        setErro('');
+    const fazerLogin = async (evento) => {
+    evento.preventDefault(); 
+    setErro('');
 
-        // Simulação: Se ele preencheu os dois campos, deixa passar
-        if (usuario !== '' && senha !== '') {
-            console.log("Mock de Login: Acesso Liberado!");
-            // Aqui avisamos o App.jsx para trocar para a tela do Feed
+    try {
+        const resposta = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: usuario, senha: senha })
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok && dados.sucesso) {
+            // se der sucesso salva tudo no navegador
+            localStorage.setItem('usuarioID', dados.id);
+            localStorage.setItem('usuarioNick', dados.username);
+
+            console.log("Acesso OK. ID " + dados.id);
             props.onLoginSucesso(); 
         } else {
-            setErro("Preencha usuário e senha para entrar.");
+            setErro(dados.mensagem || "Usuário ou senha incorretos.");
+        }
+        } catch (err) {
+            setErro("Servidor Node desligado.");
         }
     };
 

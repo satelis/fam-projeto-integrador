@@ -6,23 +6,32 @@ export default function Cadastro(props) {
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [erro, setErro] = useState('');
 
-    const fazerCadastro = (evento) => {
+    const fazerCadastro = async (evento) => {
         evento.preventDefault();
         setErro(''); 
 
-        // validação de senha
         if (senha !== confirmarSenha) {
             setErro("As senhas diferem!");
             return;
         }
 
-        if (usuario !== '' && senha !== '') {
-            // Finge que salvou
-            alert("Simulação: Usuário " + usuario + " cadastrado com sucesso!");
-            // Manda o App voltar para a tela de login
-            props.onCadastroSucesso(); 
-        } else {
-            setErro("Preencha todos os campos.");
+        try {
+            const resposta = await fetch('http://localhost:3000/cadastrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: usuario, senha: senha })
+            });
+
+            const dados = await resposta.json();
+
+            if (resposta.ok) {
+                alert(`Usuário ${usuario} cadastrado com sucesso!`);
+                props.onCadastroSucesso(); 
+            } else {
+                setErro(dados.erro || "Erro ao cadastrar.");
+            }
+        } catch (err) {
+            setErro("Servidor offline!");
         }
     };
 

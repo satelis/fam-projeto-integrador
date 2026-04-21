@@ -1,21 +1,22 @@
-//conexao com o .env que está na pasta raiz
+// conecta com o .env
 require('dotenv').config({ path: '../.env' });
-//conexão com o banco de dados
+//conecta com o sql
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
 });
 
 connection.connect((err) => {
     if(err) {
-        console.log("Erro ao conectar ao banco de dados: ", err.stack)
+        console.log("Erro ao conectar ao banco de dados: ", err.message)
         return;
     }
-    console.log("Conectado ao Banco como ID: " + connection.threadId);
+    console.log("Conectado ao Banco na Nuvem! ID: " + connection.threadId);
 });
 
 module.exports = connection;

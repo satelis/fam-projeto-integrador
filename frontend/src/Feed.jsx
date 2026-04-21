@@ -1,26 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Feed(props) {
-  const [reviews, setReviews] = useState([
-    { 
-      id: 1, 
-      usuario: "GamerBR", 
-      categoria: "Jogos", 
-      midia: "Counter-Strike 2",
-      imagem: "", 
-      nota: 8, 
-      texto: "A fumaça nova mudou o meta, mas o FPS cai." 
-    },
-    {
-        id: 2,
-        usuario: "Ravenouu",
-        categoria: "Séries",
-        midia: "Xo, Kitty",
-        imagem: "",
-        nota: 9,
-        texto: "Amei o romance entre a Kitty e o Min Ho"
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
+
+  const buscarReviews = async () => {
+    try {
+      const resposta = await fetch('http://localhost:3000/reviews');
+      const dados = await resposta.json();
+      setReviews(dados);
+    } 
+    catch (erro) {
+      console.error("Erro ao carregar feed:", erro);
+    }
+};
+
+//assim que o usuario loga, carrega o feed
+useEffect(() => {
+  buscarReviews();
+}, []);;
 
   const [categoria, setCategoria] = useState('Animes');
   const [busca, setBusca] = useState('');
@@ -59,16 +56,27 @@ export default function Feed(props) {
     if (categoria === 'Animes') {
       try {
         const resposta = await fetch(`https://api.jikan.moe/v4/anime?q=${termoDigitado}&limit=5`);
-        const dados = await resposta.json();
         
-        setResultados(dados.data.map(anime => ({
-          titulo: anime.title,
-          imagem: anime.images?.jpg?.image_url || "" 
-        })));
+        if (!resposta.ok) throw new Error("Erro na rede / limite de chamadas da API");
+
+        const dados = await resposta.json();
+
+        if (dados && dados.data) {
+          setResultados(dados.data.map(anime => ({
+            titulo: anime.title,
+            imagem: anime.images?.jpg?.image_url || "" 
+          })));
+        } else {
+          // se der erro (vir vazio) limpa a lista
+          setResultados([]);
+        }
+
       } catch (erro) {
         console.error("Erro anime:", erro);
+        setResultados([]); //se der erro limpa a lista
       }
-    } 
+    }
+
     // --- BUSCA DE SÉRIES (TVmaze API) ---
     else if (categoria === 'Séries') {
       try {
@@ -118,34 +126,42 @@ export default function Feed(props) {
     }
   };
 
-  const postarReview = (evento) => {
+  const postarReview = async (evento) => {
     evento.preventDefault();
 
     if (!midiaSelecionada) {
-      alert("Selecione uma mídia da lista de buscas antes de postar!");
+      alert("Selecione uma mídia antes de postar!");
       return;
     }
 
     const novaReview = {
-      id: Date.now(), 
-      usuario: localStorage.getItem('usuarioNick') || "Você", 
+      usuario_id: localStorage.getItem('usuarioID'), // Pegando o ID de quem logou
       categoria: categoria,
       midia: midiaSelecionada,
-      // Passamos a imagem selecionada para dentro do post
-      imagem: imagemSelecionada, 
+      imagem_url: imagemSelecionada,
       nota: nota,
       texto: texto
     };
 
-    setReviews([novaReview, ...reviews]);
+    try {
+      const resposta = await fetch('http://localhost:3000/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novaReview)
+      });
 
-    // Limpa tudo após postar
-    setBusca('');
-    setResultados([]);
-    setMidiaSelecionada('');
-    setImagemSelecionada('');
-    setNota('');
-    setTexto('');
+      if (resposta.ok) {
+        alert("Review publicada com sucesso!");
+        buscarReviews(); // Recarrega a lista para o post novo aparecer
+        // Limpa os campos
+        setBusca('');
+        setMidiaSelecionada('');
+        setNota('');
+        setTexto('');
+      }
+    } catch (err) {
+      alert("Erro ao conectar com o servidor.");
+    }
   };
 
   return (
@@ -233,18 +249,17 @@ export default function Feed(props) {
         </form>
       </div>
 
-      <h2>Últimas Avaliações</h2>
+<h2>Últimas Avaliações</h2>
       {reviews.map((review) => (
         <div key={review.id} style={{ border: '1px solid #ccc', margin: '15px 0', padding: '15px', borderRadius: '8px', display: 'flex', gap: '20px' }}>
           
-          {/* Exibindo a capa no post final, se ela existir */}
-          {review.imagem && (
-            <img src={review.imagem} alt={review.midia} style={{ width: '100px', height: '140px', objectFit: 'cover', borderRadius: '8px' }} />
+          {review.imagem_url && (
+            <img src={review.imagem_url} alt={review.midia} style={{ width: '100px', height: '140px', objectFit: 'cover', borderRadius: '8px' }} />
           )}
 
           <div style={{ flex: 1 }}>
             <h4 style={{ margin: '0 0 10px 0' }}>
-              {review.usuario} avaliou o {review.categoria.slice(0, -1)}: <span style={{ color: '#007bff' }}>{review.midia}</span>
+              {review.username} avaliou o {review.categoria?.slice(0, -1)}: <span style={{ color: '#007bff' }}>{review.midia}</span>
             </h4>
             <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
             <p style={{ margin: '0' }}>{review.texto}</p>
