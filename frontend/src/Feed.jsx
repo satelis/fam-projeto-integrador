@@ -47,6 +47,7 @@ useEffect(() => {
     if (categoria === 'Animes') {
       try {
         const resposta = await fetch(`https://api.jikan.moe/v4/anime?q=${termoDigitado}&limit=5`);
+        
         if (!resposta.ok) throw new Error("Erro na rede / limite de chamadas da API");
 
         const dados = await resposta.json();
@@ -64,7 +65,6 @@ useEffect(() => {
         console.error("Erro anime:", erro);
         setResultados([]); //se der erro limpa a lista
       }
-    
     }
 
     // --- BUSCA DE SÉRIES (TVmaze API) ---
@@ -128,7 +128,7 @@ useEffect(() => {
       usuario_id: localStorage.getItem('usuarioID'), // Pegando o ID de quem logou
       categoria: categoria,
       midia: midiaSelecionada,
-      imagem_url: imagemSelecionada, 
+      imagem_url: imagemSelecionada,
       nota: nota,
       texto: texto
     };
@@ -230,7 +230,7 @@ useEffect(() => {
         </form>
       </div>
 
-    <h2>Últimas Avaliações</h2>
+<h2>Últimas Avaliações</h2>
       {reviews.map((review) => (
         <div key={review.id} style={{ border: '1px solid #ccc', margin: '15px 0', padding: '15px', borderRadius: '8px', display: 'flex', gap: '20px' }}>
           

@@ -51,6 +51,33 @@ app.post('/cadastrar', (req, res) => {
     });
 });
 
+//post de feeds (salvar review)
+app.post('/reviews', (req, res) => {
+    const { usuario_id, categoria, midia, imagem_url, nota, texto } = req.body;
+    
+    const sql = "INSERT INTO reviews (usuario_id, categoria, midia, imagem_url, nota, texto) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    db.query(sql, [usuario_id, categoria, midia, imagem_url, nota, texto], (err, result) => {
+        if (err) {
+            console.error("ERRO AO SALVAR REVIEW:", err.message);
+            return res.status(500).json({ sucesso: false, erro: err.message });
+        }
+        res.json({ sucesso: true, id: result.insertId });
+    });
+});
+
+// get de feeds (achar as reviews)
+app.get('/reviews', (req, res) => {
+    const sql = "SELECT r.*, u.username FROM reviews r JOIN usuarios u ON r.usuario_id = u.id ORDER BY r.data_post DESC";
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json([]);
+        }
+        res.json(results); 
+    });
+});
+
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
 
