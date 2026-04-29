@@ -4,28 +4,63 @@ const CHAVE_TMDB = "b86652bc36a0beb002d68ac4bdd093ba";
 const CHAVE_RAWG = "ef4e86db37e54732884687170f67a3ec";
 
 export default function Lista(props) {
-  // busca do localStorage ao iniciar
-  const [itens, setItens] = useState(() => {
-    const itensSalvos = localStorage.getItem(`Lista_${props.categoria}`);
-    return itensSalvos ? JSON.parse(itensSalvos) : [];
-  });
+  // busca do localStorage ao iniciar (Agora buscamos do Banco, mas mantemos o estado inicial vazio)
+  const [itens, setItens] = useState([]);
+  
+  // Pegamos o ID do usuário para saber de quem é a lista
+  const usuarioID = localStorage.getItem('usuarioID');
 
-  // Salva automático no navegador sempre que a lista mudar
+  // Salva automático no navegador sempre que a lista mudar 
+  // (Como agora usamos SQL, esse useEffect serve para carregar os dados da nuvem ao abrir a página)
   useEffect(() => {
-    localStorage.setItem(`Lista_${props.categoria}`, JSON.stringify(itens));
-  }, [itens, props.categoria]);
+    const carregarDaNuvem = async () => {
+        try {
+            const resposta = await fetch(`http://localhost:3000/lista/${usuarioID}/${props.categoria}`);
+            const dados = await resposta.json();
+            if (Array.isArray(dados)) {
+                setItens(dados);
+            }
+        } catch (erro) {
+            console.error("Erro ao carregar lista:", erro);
+        }
+    };
+    if (usuarioID) carregarDaNuvem();
+  }, [props.categoria, usuarioID]);
 
   // Estados da busca
   const [mostrandoBusca, setMostrandoBusca] = useState(false);
   const [busca, setBusca] = useState('');
   const [resultados, setResultados] = useState([]);
 
-  const removerItem = (idParaRemover) => {
-    setItens(itens.filter(item => item.id !== idParaRemover));
+  const removerItem = async (idParaRemover) => {
+    try {
+        await fetch(`http://localhost:3000/lista/${idParaRemover}`, { method: 'DELETE' });
+        setItens(itens.filter(item => item.id !== idParaRemover));
+    } catch (erro) {
+        console.error("Erro ao remover:", erro);
+    }
   };
 
-  const atualizarItem = (id, campo, novoValor) => {
-    setItens(itens.map(item => item.id === id ? { ...item, [campo]: novoValor } : item));
+  const atualizarItem = async (id, campo, novoValor) => {
+    // Preparando os dados para o banco (ajustando nomes de colunas)
+    const itemRef = itens.find(it => it.id === id);
+    const bodyEnvio = {
+        status_consumo: campo === 'status' ? novoValor : itemRef.status_consumo,
+        nota_pessoal: campo === 'nota' ? novoValor : itemRef.nota_pessoal
+    };
+
+    try {
+        await fetch(`http://localhost:3000/lista/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bodyEnvio)
+        });
+        
+        // Atualiza a tela após o banco confirmar
+        setItens(itens.map(item => item.id === id ? { ...item, status_consumo: bodyEnvio.status_consumo, nota_pessoal: bodyEnvio.nota_pessoal } : item));
+    } catch (erro) {
+        console.error("Erro ao atualizar:", erro);
+    }
   };
 
   // BUSCA COM FILTRO E ORDENAÇÃO
@@ -42,7 +77,7 @@ export default function Lista(props) {
       try {
         const resposta = await fetch(`https://api.jikan.moe/v4/anime?q=${termoDigitado}&limit=15`);
         const dados = await resposta.json();
-        itensDaApi = dados.data.map(anime => ({ titulo: anime.title, imagem: anime.images?.jpg?.image_url || "" }));
+        itensDaApi = dados.data?.map(anime => ({ titulo: anime.title, imagem: anime.images?.jpg?.image_url || "" })) || [];
       } catch (erro) { console.error("Erro anime:", erro); }
     } 
     else if (props.categoria === 'Séries') {
@@ -91,19 +126,33 @@ export default function Lista(props) {
     setResultados(resultadosFiltrados.slice(0, 5));
   };
 
-  const selecionarParaLista = (midiaEncontrada) => {
+  const selecionarParaLista = async (midiaEncontrada) => {
     const novoItem = {
-      id: Date.now(),
-      titulo: midiaEncontrada.titulo,
-      imagem: midiaEncontrada.imagem,
-      status: props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo', 
-      nota: 0 
+        usuario_id: usuarioID,
+        categoria: props.categoria,
+        titulo: midiaEncontrada.titulo,
+        imagem_url: midiaEncontrada.imagem,
+        status_consumo: props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo', 
+        nota_pessoal: 0 
     };
 
-    setItens([novoItem, ...itens]);
-    setBusca('');
-    setResultados([]);
-    setMostrandoBusca(false);
+    try {
+        const res = await fetch('http://localhost:3000/lista', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(novoItem)
+        });
+        
+        if (res.ok) {
+            const info = await res.json();
+            setItens([{ ...novoItem, id: info.id }, ...itens]);
+            setBusca('');
+            setResultados([]);
+            setMostrandoBusca(false);
+        }
+    } catch (erro) {
+        console.error("Erro ao salvar item:", erro);
+    }
   };
 
   return (
@@ -172,12 +221,12 @@ export default function Lista(props) {
             itens.map((item) => (
               <tr key={item.id} style={{ borderBottom: '1px solid #333' }}>
                 <td style={{ padding: '10px 15px' }}>
-                  {item.imagem && <img src={item.imagem} alt="Capa" style={{ width: '40px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />}
+                  {item.imagem_url && <img src={item.imagem_url} alt="Capa" style={{ width: '40px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />}
                 </td>
                 <td style={{ padding: '10px 15px', fontWeight: 'bold' }}>{item.titulo}</td>
                 <td style={{ padding: '10px 15px' }}>
                   <select 
-                    value={item.status} 
+                    value={item.status_consumo} 
                     onChange={(e) => atualizarItem(item.id, 'status', e.target.value)}
                     style={{ padding: '5px', background: '#333', color: 'white', border: '1px solid #555', borderRadius: '4px' }}
                   >
@@ -193,7 +242,7 @@ export default function Lista(props) {
                   <input 
                     type="number" 
                     min="0" max="10" 
-                    value={item.nota}
+                    value={item.nota_pessoal}
                     onChange={(e) => atualizarItem(item.id, 'nota', Number(e.target.value))}
                     style={{ width: '60px', padding: '5px', background: '#333', color: 'white', border: '1px solid #555', borderRadius: '4px' }}
                   />

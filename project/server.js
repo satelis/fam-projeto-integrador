@@ -78,6 +78,31 @@ app.get('/reviews', (req, res) => {
     });
 });
 
+//post de listas
+app.post('/lista', (req, res) => {
+    console.log("DADOS RECEBIDOS DO REACT:", req.body);
+    const { usuario_id, categoria, titulo, imagem_url, status_consumo, nota_pessoal } = req.body;
+    const sql = "INSERT INTO minhas_listas (usuario_id, categoria, titulo, imagem_url, status_consumo, nota_pessoal) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    db.query(sql, [usuario_id, categoria, titulo, imagem_url, status_consumo, nota_pessoal], (err, result) => {
+        if (err) {
+            console.error("Erro ao inserir:", err.message);
+            return res.status(500).json(err);
+        }
+        res.json({ id: result.insertId });
+    });
+});
+
+// get de listas
+app.get('/lista/:usuario_id/:categoria', (req, res) => {
+    const { usuario_id, categoria } = req.params;
+    const sql = "SELECT * FROM minhas_listas WHERE usuario_id = ? AND categoria = ?";
+    db.query(sql, [usuario_id, categoria], (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
+});
+
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
 
