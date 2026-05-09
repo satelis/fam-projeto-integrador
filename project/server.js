@@ -68,12 +68,14 @@ app.post('/reviews', (req, res) => {
 
 // get de feeds (achar as reviews)
 app.get('/reviews', (req, res) => {
-    const sql = "SELECT r.*, u.username FROM reviews r JOIN usuarios u ON r.usuario_id = u.id ORDER BY r.data_post DESC";
+    const sql = `
+        SELECT r.*, u.username, 
+        (SELECT COUNT(*) FROM likes WHERE review_id = r.id) as total_likes
+        FROM reviews r 
+        JOIN usuarios u ON r.usuario_id = u.id 
+        ORDER BY r.data_post DESC`;
     db.query(sql, (err, results) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).json([]);
-        }
+        if (err) return res.status(500).json([]);
         res.json(results); 
     });
 });
@@ -102,6 +104,59 @@ app.get('/lista/:usuario_id/:categoria', (req, res) => {
         res.json(results);
     });
 });
+
+//post de likes (com toggle)
+app.post('/likes', (req, res) => {
+    const { usuario_id, review_id } = req.body;
+    console.log("like recebido:", { usuario_id, review_id });
+    
+    // verifica se o like já existe
+    const sqlCheck = "SELECT * FROM likes WHERE usuario_id = ? AND review_id = ?";
+    db.query(sqlCheck, [usuario_id, review_id], (err, results) => {
+        if (err) return res.status(500).json(err);
+
+        if (results.length > 0) {
+            // se ele ja existe ele deleta o like
+            const sqlDel = "DELETE FROM likes WHERE usuario_id = ? AND review_id = ?";
+            db.query(sqlDel, [usuario_id, review_id], (err) => {
+                if (err) return res.status(500).json(err);
+                return res.json({ curtido: false });
+            });
+        } else {
+            // se não existe, insere o like
+            const sqlIns = "INSERT INTO likes (usuario_id, review_id) VALUES (?, ?)";
+            db.query(sqlIns, [usuario_id, review_id], (err) => {
+                if (err) return res.status(500).json(err);
+                return res.json({ curtido: true });
+            });
+        }
+    });
+});
+
+// post comentarios
+app.post('/comentarios', (req, res) => {
+    const { review_id, usuario_id, texto } = req.body;
+    const sql = "INSERT INTO comentarios (review_id, usuario_id, texto) VALUES (?, ?, ?)";
+    db.query(sql, [review_id, usuario_id, texto], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ sucesso: true, id: result.insertId });
+    });
+});
+
+// get comentarios
+app.get('/comentarios/:review_id', (req, res) => {
+    const sql = `
+        SELECT c.*, u.username 
+        FROM comentarios c 
+        JOIN usuarios u ON c.usuario_id = u.id 
+        WHERE c.review_id = ? 
+        ORDER BY c.data_comentario ASC`;
+    db.query(sql, [req.params.review_id], (err, results) => {
+        if (err) return res.status(500).json([]);
+        res.json(results);
+    });
+});
+
 
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
