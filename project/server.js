@@ -139,21 +139,27 @@ app.post('/likes', (req, res) => {
 app.post('/comentarios', (req, res) => {
     const { review_id, usuario_id, texto } = req.body;
     const sql = "INSERT INTO comentarios (review_id, usuario_id, texto) VALUES (?, ?, ?)";
+    
     db.query(sql, [review_id, usuario_id, texto], (err, result) => {
-        if (err) return res.status(500).json(err);
+        if (err) {
+            console.error("Erro ao comentar:", err.message);
+            return res.status(500).json(err);
+        }
         res.json({ sucesso: true, id: result.insertId });
     });
 });
 
-// get comentarios
+// get comentarios (de review especifica)
 app.get('/comentarios/:review_id', (req, res) => {
+    const { review_id } = req.params;
     const sql = `
         SELECT c.*, u.username 
         FROM comentarios c 
         JOIN usuarios u ON c.usuario_id = u.id 
         WHERE c.review_id = ? 
         ORDER BY c.data_comentario ASC`;
-    db.query(sql, [req.params.review_id], (err, results) => {
+
+    db.query(sql, [review_id], (err, results) => {
         if (err) return res.status(500).json([]);
         res.json(results);
     });
