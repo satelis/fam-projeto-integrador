@@ -68,13 +68,15 @@ app.post('/reviews', (req, res) => {
 
 // get de feeds (achar as reviews)
 app.get('/reviews', (req, res) => {
+    const usuario_id = req.query.usuario_id || 0;
     const sql = `
         SELECT r.*, u.username, 
-        (SELECT COUNT(*) FROM likes WHERE review_id = r.id) as total_likes
+        (SELECT COUNT(*) FROM likes WHERE review_id = r.id) as total_likes,
+        (SELECT COUNT(*) FROM likes WHERE review_id = r.id AND usuario_id = ?) as deu_like
         FROM reviews r 
         JOIN usuarios u ON r.usuario_id = u.id 
         ORDER BY r.data_post DESC`;
-    db.query(sql, (err, results) => {
+    db.query(sql, [usuario_id], (err, results) => {
         if (err) return res.status(500).json([]);
         res.json(results); 
     });

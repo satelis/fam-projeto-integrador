@@ -4,15 +4,35 @@ export default function Feed(props) {
   const [reviews, setReviews] = useState([]);
 
   const buscarReviews = async () => {
+    const usuario_id = localStorage.getItem('usuarioID');
+    
+    //carregar reviews
     try {
-      const resposta = await fetch('http://localhost:3000/reviews');
+      const resposta = await fetch(`http://localhost:3000/reviews?usuario_id=${usuario_id}`);
       const dados = await resposta.json();
       setReviews(dados);
     } 
     catch (erro) {
       console.error("Erro ao carregar feed:", erro);
     }
-};
+  };
+
+    //função de dar like
+  const darLike = async (review_id) => {
+    const usuario_id = localStorage.getItem('usuarioID');
+    
+    try {
+      await fetch('http://localhost:3000/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario_id, review_id })
+      });
+      
+      buscarReviews(); 
+    } catch (erro) {
+      console.error("Erro ao curtir:", erro);
+    }
+  };
 
 //assim que o usuario loga, carrega o feed
 useEffect(() => {
@@ -244,6 +264,15 @@ useEffect(() => {
             </h4>
             <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
             <p style={{ margin: '0' }}>{review.texto}</p>
+            
+            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              
+              <button onClick={() => darLike(review.id)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: review.deu_like > 0 ? '#ff4d4d' : '#888', transition: 'color 0.2s'}}
+              >❤ {review.total_likes || 0}
+            </button>
+            
+            </div>
           </div>
           
         </div>
