@@ -306,7 +306,7 @@
               <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
               <p style={{ margin: '0' }}>{review.texto}</p>
               
-              {/*LIKES*/}
+              {/*LIKES e CONTAGEM COMENTARIOS*/}
               <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <button 
                   onClick={() => darLike(review.id)}
@@ -314,6 +314,12 @@
                 >
                   ❤ {review.total_likes || 0}
                 </button>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#888', fontSize: '18px' }}>
+                  <span>🗨</span> 
+                  <span style={{ fontSize: '16px' }}>{review.total_comentarios || 0}</span>
+                </div>
+
               </div>
 
               {/*COMENTARIOS*/}
