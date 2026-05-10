@@ -80,6 +80,8 @@ DB_PORT=29574
 Bash
 npm install
 npm start
+
+
 Equipe de Desenvolvimento
 Nome	RA	Função
 Karina Batista da Silva	        20241934       ADM Banco de Dados
