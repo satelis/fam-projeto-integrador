@@ -1,6 +1,6 @@
 # Projeto Integrador - FAM 🌍
 
-# Nerd&Geek Hub
+# Geek Hub
 
 **Plataforma integrada para catalogação, avaliação e interação na cultura pop e entretenimento.**
 
@@ -58,28 +58,6 @@ O Nerd&Geek Hub opera com um banco de dados relacional hospedado remotamente na 
 * **Acessibilidade:** Os dados são acessíveis de forma segura via porta 29574 para toda a equipe técnica.
 * **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host `shinkansen.proxy.rlwy.net`.
 * **Sincronização:** Persistência de dados centralizada, permitindo que a sessão do usuário seja mantida independentemente do hardware utilizado no acesso.
-
-
-## Instruções de Execução
-
-### 1. Clonagem do Repositório
-```bash
-git clone [https://github.com/seu-usuario/nerd-geek-hub.git](https://github.com/seu-usuario/nerd-geek-hub.git)
-
-2. Configuração do Ambiente
-Configure o arquivo .env no diretório backend com os seguintes parâmetros de conexão:
-
-Snippet de código
-DB_HOST=shinkansen.proxy.rlwy.net
-DB_USER=root
-DB_PASS=SUA_SENHA_FORNECIDA
-DB_NAME=railway
-DB_PORT=29574
-
-3. Inicialização
-Bash
-npm install
-npm start
 
 
 Equipe de Desenvolvimento
