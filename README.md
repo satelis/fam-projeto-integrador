@@ -59,13 +59,11 @@ O Nerd&Geek Hub opera com um banco de dados relacional hospedado remotamente na 
 * **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host `shinkansen.proxy.rlwy.net`.
 * **Sincronização:** Persistência de dados centralizada, permitindo que a sessão do usuário seja mantida independentemente do hardware utilizado no acesso.
 
-
 Equipe de Desenvolvimento
 Nome	                          RA	            Função
 Karina Batista da Silva	        20241934       ADM Banco de Dados
 Henrique Ferreira Satelis	      20241652       Desenvolvedor Backend
 Henrique Brancalhão de Oliveira	20231302       Desenvolvedor Frontend
-
 
 Diferenciais do Projeto:
 
