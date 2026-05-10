@@ -4,6 +4,7 @@
 
 **Plataforma integrada para catalogação, avaliação e interação na cultura pop e entretenimento.**
 
+---
 
 ## Descrição do Projeto
 
@@ -11,6 +12,7 @@ O **Nerd&Geek Hub** é um sistema de gerenciamento de informações e rede socia
 
 O sistema resolve a problemática da volatilidade de dados em aplicações baseadas apenas em cache de navegador, substituindo o armazenamento local (LocalStorage) por uma arquitetura robusta de banco de dados relacional. Isso garante a persistência das informações, segurança e a integridade das interações em um ambiente multiusuário.
 
+---
 
 ## Tecnologias Utilizadas
 
@@ -22,6 +24,7 @@ A stack tecnológica foi selecionada visando escalabilidade e separação de res
 * **Infraestrutura Cloud:** Railway (Hospedagem e provisionamento remoto do banco de dados).
 * **Gestão de Dados:** DBeaver (Administração de esquemas e execução de scripts SQL).
 
+---
 
 ## Funcionalidades do Sistema
 
@@ -33,6 +36,7 @@ A stack tecnológica foi selecionada visando escalabilidade e separação de res
 | **Gestão de Backlog** | Controle de progresso individual (Status: Assistindo, Finalizado, Planejado). |
 | **Avaliação Quantitativa** | Atribuição de notas (0 a 10) com validação de integridade no banco de dados. |
 
+---
 
 ## Estrutura do Banco de Dados
 
@@ -50,6 +54,7 @@ A arquitetura de dados foi projetada seguindo normas de normalização para gara
 * **Referential Integrity:** Implementação de Foreign Keys com a instrução `ON DELETE CASCADE`, garantindo que a exclusão de registros mestres remova automaticamente os dados dependentes.
 * **Check Constraints:** Validação nativa para garantir que avaliações numéricas permaneçam estritamente no intervalo de 0 a 10.
 
+---
 
 ## Integração e Armazenamento em Nuvem
 
@@ -59,21 +64,24 @@ O Nerd&Geek Hub opera com um banco de dados relacional hospedado remotamente na 
 * **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host `shinkansen.proxy.rlwy.net`.
 * **Sincronização:** Persistência de dados centralizada, permitindo que a sessão do usuário seja mantida independentemente do hardware utilizado no acesso.
 
-Equipe de Desenvolvimento
-Nome	                          RA	            Função
-Karina Batista da Silva	        20241934       ADM Banco de Dados
-Henrique Ferreira Satelis	      20241652       Desenvolvedor Backend
-Henrique Brancalhão de Oliveira	20231302       Desenvolvedor Frontend
+---
 
-Diferenciais do Projeto:
+## Equipe de Desenvolvimento
 
-Arquitetura Cloud-First: Independência de servidores locais para o armazenamento de dados.
+| Nome | RA | Função |
+| :--- | :--- | :--- |
+| **Karina Batista da Silva** | 20241934 | ADM Banco de Dados |
+| **Henrique Ferreira Satelis** | 20241652 | Desenvolvedor Backend |
+| **Henrique Brancalhão de Oliveira** | 20231302 | Desenvolvedor Frontend |
 
-Integridade de Dados: Regras de negócio aplicadas diretamente no SGBD para prevenir inconsistências.
+---
 
-Modularidade: Estrutura clara entre as camadas de apresentação e persistência.
+## Diferenciais do Projeto
 
-Escalabilidade: Pronto para expansão de volume de dados sem necessidade de reestruturação.
+* **Arquitetura Cloud-First:** Independência de servidores locais para o armazenamento de dados.
+* **Integridade de Dados:** Regras de negócio aplicadas diretamente no SGBD para prevenir inconsistências.
+* **Modularidade:** Estrutura clara entre as camadas de apresentação e persistência.
+* **Escalabilidade:** Pronto para expansão de volume de dados sem necessidade de reestruturação.
 
-
-Documentação técnica desenvolvida para fins acadêmicos e apresentação.
+---
+*Documentação técnica desenvolvida para fins acadêmicos e apresentação oficial de projeto.*
