@@ -100,4 +100,4 @@ Modularidade: Estrutura clara entre as camadas de apresentação e persistência
 Escalabilidade: Pronto para expansão de volume de dados sem necessidade de reestruturação.
 
 
-Documentação técnica desenvolvida para fins acadêmicos e apresentaç
+Documentação técnica desenvolvida para fins acadêmicos e apresentação.
