@@ -83,9 +83,9 @@ npm start
 
 
 Equipe de Desenvolvimento
-Nome	RA	Função
+Nome	                          RA	            Função
 Karina Batista da Silva	        20241934       ADM Banco de Dados
-Henrique Ferreira Satelis	20241652       Desenvolvedor Backend
+Henrique Ferreira Satelis	      20241652       Desenvolvedor Backend
 Henrique Brancalhão de Oliveira	20231302       Desenvolvedor Frontend
 
 
