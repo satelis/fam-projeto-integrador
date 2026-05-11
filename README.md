@@ -8,7 +8,7 @@
 
 ## Descrição do Projeto
 
-O **Nerd&Geek Hub** é um sistema de gerenciamento de informações e rede social planejado para o nicho de entretenimento, abrangendo animes, games, filmes e séries. A aplicação permite que usuários cataloguem conteúdos, registrem seu progresso de consumo e interajam através de avaliações e comentários.
+O **Geek Hub** é um sistema de gerenciamento de informações e rede social planejado para o nicho de entretenimento, abrangendo animes, games, filmes e séries. A aplicação permite que usuários cataloguem conteúdos, registrem seu progresso de consumo e interajam através de avaliações e comentários.
 
 O sistema resolve a problemática da volatilidade de dados em aplicações baseadas apenas em cache de navegador, substituindo o armazenamento local (LocalStorage) por uma arquitetura robusta de banco de dados relacional. Isso garante a persistência das informações, segurança e a integridade das interações em um ambiente multiusuário.
 
