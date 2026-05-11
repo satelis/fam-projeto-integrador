@@ -58,7 +58,7 @@ A arquitetura de dados foi projetada seguindo normas de normalização para gara
 
 ## Integração e Armazenamento em Nuvem
 
-O Nerd&Geek Hub opera com um banco de dados relacional hospedado remotamente na plataforma **Railway**.
+O Geek Hub opera com um banco de dados relacional hospedado remotamente na plataforma **Railway**.
 
 * **Acessibilidade:** Os dados são acessíveis de forma segura via porta 29574 para toda a equipe técnica.
 * **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host `shinkansen.proxy.rlwy.net`.
