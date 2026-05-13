@@ -5,7 +5,8 @@
     const [editandoId, setEditandoId] = useState(null); 
     const [textoEditado, setTextoEditado] = useState("");
     const [comentariosAbertos, setComentariosAbertos] = useState({}); 
-    const [textoComentarios, setTextoComentarios] = useState({}); 
+    const [textoComentarios, setTextoComentarios] = useState({});   
+    const [notaEditada, setNotaEditada] = useState("");
 
     const buscarReviews = async () => {
       const usuario_id = localStorage.getItem('usuarioID');
@@ -221,16 +222,24 @@
     };
 
     const atualizarReview = async (review_id) => {
+      if (notaEditada > 10 || notaEditada < 0) {
+        alert("A nota deve ser entre 0 e 10!");
+        return; 
+      }
+
       try {
         const resposta = await fetch(`http://localhost:3000/reviews/${review_id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ texto: textoEditado })
+          body: JSON.stringify({ 
+            texto: textoEditado, 
+            nota: notaEditada 
+          })
         });
 
         if (resposta.ok) {
-          // sai da edição e atualiza a pagina
-          setEditandoId(null);
+          //fecha e atualiza a pagina do feed
+          setEditandoId(null); 
           buscarReviews(); 
         }
       } catch (err) {
@@ -327,12 +336,23 @@
               
               {/*EDICAO*/}  
               {editandoId === review.id ? ( 
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '10px', background: '#1e1e24', padding: '10px', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '8px' }}>
+                    <input 
+                      type="number" min="0" max="10"
+                      value={notaEditada}
+                      onChange={(e) => setNotaEditada(e.target.value)}
+                      style={{ width: '50px', padding: '5px', borderRadius: '4px', background: '#25252b', color: 'white', border: '1px solid #444' }}
+                    />
+                    <span style={{ color: '#888', fontSize: '14px' }}>/ 10</span>
+                  </div>
+
                   <textarea 
                     value={textoEditado} 
                     onChange={(e) => setTextoEditado(e.target.value)}
                     style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#1e1e24', color: 'white', border: '1px solid #444' }}
                   />
+                  
                   <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
                     <button onClick={() => atualizarReview(review.id)} style={{ background: '#28a745', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>
                       Salvar
@@ -345,9 +365,14 @@
               ) : (
                 <div style={{ marginBottom: '10px' }}>
                   <p style={{ margin: '0' }}>{review.texto}</p>
+                  
                   {String(review.usuario_id) === String(localStorage.getItem('usuarioID')) && (
                     <button 
-                      onClick={() => { setEditandoId(review.id); setTextoEditado(review.texto); }}
+                      onClick={() => { 
+                        setEditandoId(review.id); 
+                        setTextoEditado(review.texto);
+                        setNotaEditada(review.nota);
+                      }}
                       style={{ background: 'none', border: 'none', color: '#007bff', fontSize: '12px', cursor: 'pointer', padding: '5px 0', textDecoration: 'underline' }}
                     >
                       ✎ Editar Review

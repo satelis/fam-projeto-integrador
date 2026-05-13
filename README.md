@@ -22,8 +22,6 @@ A stack tecnológica foi selecionada visando escalabilidade e separação de res
 * **Backend:** Node.js (Construção da API e lógica de integração).
 * **Banco de Dados:** MySQL (Sistema Gerenciador de Banco de Dados Relacional).
 * **Infraestrutura Cloud:** Railway (Hospedagem e provisionamento remoto do banco de dados).
-* **Gestão de Dados:** DBeaver (Administração de esquemas e execução de scripts SQL).
-
 ---
 
 ## Funcionalidades do Sistema

@@ -86,10 +86,10 @@ app.get('/reviews', (req, res) => {
 //put de feed (esse existe pra edição)
 app.put('/reviews/:id', (req, res) => {
     const { id } = req.params;
-    const { texto } = req.body;
-    const sql = "UPDATE reviews SET texto = ? WHERE id = ?";
+    const { texto, nota } = req.body; 
+    const sql = "UPDATE reviews SET texto = ?, nota = ? WHERE id = ?";
     
-    db.query(sql, [texto, id], (err, result) => {
+    db.query(sql, [texto, nota, id], (err, result) => {
         if (err) return res.status(500).json(err);
         res.json({ mensagem: "Post editado." });
     });
