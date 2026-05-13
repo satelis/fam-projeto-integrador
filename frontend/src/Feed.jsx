@@ -2,6 +2,8 @@
 
   export default function Feed(props) {
     const [reviews, setReviews] = useState([]); 
+    const [editandoId, setEditandoId] = useState(null); 
+    const [textoEditado, setTextoEditado] = useState("");
     const [comentariosAbertos, setComentariosAbertos] = useState({}); 
     const [textoComentarios, setTextoComentarios] = useState({}); 
 
@@ -218,6 +220,24 @@
       }
     };
 
+    const atualizarReview = async (review_id) => {
+      try {
+        const resposta = await fetch(`http://localhost:3000/reviews/${review_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto: textoEditado })
+        });
+
+        if (resposta.ok) {
+          // sai da edição e atualiza a pagina
+          setEditandoId(null);
+          buscarReviews(); 
+        }
+      } catch (err) {
+        console.error("Erro ao atualizar review:", err);
+      }
+    };
+
     return (
       <div className="feed-container" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
 
@@ -304,8 +324,38 @@
                 {review.username} avaliou o {review.categoria?.slice(0, -1)}: <span style={{ color: '#007bff' }}>{review.midia}</span>
               </h4>
               <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
-              <p style={{ margin: '0' }}>{review.texto}</p>
               
+              {/*EDICAO*/}  
+              {editandoId === review.id ? ( 
+                <div style={{ marginBottom: '10px' }}>
+                  <textarea 
+                    value={textoEditado} 
+                    onChange={(e) => setTextoEditado(e.target.value)}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#1e1e24', color: 'white', border: '1px solid #444' }}
+                  />
+                  <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+                    <button onClick={() => atualizarReview(review.id)} style={{ background: '#28a745', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>
+                      Salvar
+                    </button>
+                    <button onClick={() => setEditandoId(null)} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginBottom: '10px' }}>
+                  <p style={{ margin: '0' }}>{review.texto}</p>
+                  {String(review.usuario_id) === String(localStorage.getItem('usuarioID')) && (
+                    <button 
+                      onClick={() => { setEditandoId(review.id); setTextoEditado(review.texto); }}
+                      style={{ background: 'none', border: 'none', color: '#007bff', fontSize: '12px', cursor: 'pointer', padding: '5px 0', textDecoration: 'underline' }}
+                    >
+                      ✎ Editar Review
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/*LIKES e CONTAGEM COMENTARIOS*/}
               <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <button 
@@ -334,7 +384,7 @@
                 {comentariosAbertos[review.id] && (
                   <div style={{ marginTop: '10px', background: '#25252b', padding: '10px', borderRadius: '6px' }}>
                     
-                    {/* lista os comentarios */}
+                    {/*lista os comentarios*/}
                     {comentariosAbertos[review.id].length > 0 ? (
                       comentariosAbertos[review.id].map((coment) => (
                         <p key={coment.id} style={{ fontSize: '13px', margin: '0 0 8px 0', borderBottom: '1px solid #333', paddingBottom: '4px' }}>
@@ -345,7 +395,7 @@
                       <p style={{ fontSize: '12px', color: '#888' }}>Nenhum comentário ainda.</p>
                     )}
                     
-                    {/* input: novo comentario*/}
+                    {/*novo comentario*/}
                     <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
                       <input 
                         type="text" 

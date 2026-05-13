@@ -51,7 +51,7 @@ app.post('/cadastrar', (req, res) => {
     });
 });
 
-//post de feeds (salvar review)
+//post de feed (salvar review)
 app.post('/reviews', (req, res) => {
     const { usuario_id, categoria, midia, imagem_url, nota, texto } = req.body;
     
@@ -66,7 +66,7 @@ app.post('/reviews', (req, res) => {
     });
 });
 
-// get de feeds (achar as reviews)
+// get de feed (achar as reviews)
 app.get('/reviews', (req, res) => {
     const usuario_id = req.query.usuario_id || 0;
     const sql = `
@@ -82,6 +82,19 @@ app.get('/reviews', (req, res) => {
         res.json(results); 
     });
 });
+
+//put de feed (esse existe pra edição)
+app.put('/reviews/:id', (req, res) => {
+    const { id } = req.params;
+    const { texto } = req.body;
+    const sql = "UPDATE reviews SET texto = ? WHERE id = ?";
+    
+    db.query(sql, [texto, id], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ mensagem: "Post editado." });
+    });
+});
+
 
 //post de listas
 app.post('/lista', (req, res) => {
