@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require ('cors');
+const cors = require('cors');
 const db = require('./db');
 const app = express();
 
@@ -12,11 +12,11 @@ app.get('/', (req, res) => {
 });
 
 //post de login
-
 app.post('/login', (req, res) => {
     const { username, senha } = req.body;
 
-    const sql = "SELECT id, username FROM usuarios WHERE username = ? AND senha = ?";
+    // Agora puxamos o avatar_url do banco
+    const sql = "SELECT id, username, avatar_url FROM usuarios WHERE username = ? AND senha = ?";
 
     db.query(sql, [username, senha], (err, results) => {
         if (err) {
@@ -27,7 +27,8 @@ app.post('/login', (req, res) => {
             res.json({
                 sucesso: true,
                 id: results[0].id,
-                username: results[0].username
+                username: results[0].username,
+                avatar_url: results[0].avatar_url // Devolvendo o avatar pro React
             });
         } else {
             res.status(401).json ({ sucesso: false, mensagem: "Usuário ou senha incorretos."})
@@ -43,11 +44,41 @@ app.post('/cadastrar', (req, res) => {
     db.query(sql, [username, senha], (err, result) => {
         //tratando erro
         if (err) {
-            console.log("ERRO DO MYSQL:", err.message); // <-- O detetive entra aqui
+            console.log("ERRO DO MYSQL:", err.message);
             return res.status(500).json({ erro: err.message });
         }
         //retorna id do user
         res.json({ mensagem: "Usuário criado.", id: result.insertId });
+    });
+});
+
+// Rota para atualizar a foto do avatar
+app.put('/usuarios/:id/avatar', (req, res) => {
+    const { id } = req.params;
+    const { avatar_url } = req.body;
+    const sql = "UPDATE usuarios SET avatar_url = ? WHERE id = ?";
+    
+    db.query(sql, [avatar_url, id], (err, result) => {
+        if (err) {
+            console.error("ERRO AO ATUALIZAR AVATAR:", err.message);
+            return res.status(500).json({ sucesso: false, erro: err.message });
+        }
+        res.json({ sucesso: true, mensagem: "Avatar atualizado!" });
+    });
+});
+
+// Rota para pegar os dados de um usuário (para o Perfil Público)
+app.get('/usuarios/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT id, username, avatar_url FROM usuarios WHERE id = ?";
+    
+    db.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json(err);
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ mensagem: "Usuário não encontrado." });
+        }
     });
 });
 
@@ -69,8 +100,9 @@ app.post('/reviews', (req, res) => {
 // get de feed (achar as reviews)
 app.get('/reviews', (req, res) => {
     const usuario_id = req.query.usuario_id || 0;
+    // Adicionamos o u.avatar_url no SELECT
     const sql = `
-        SELECT r.*, u.username, 
+        SELECT r.*, u.username, u.avatar_url, 
         (SELECT COUNT(*) FROM likes WHERE review_id = r.id) as total_likes,
         (SELECT COUNT(*) FROM likes WHERE review_id = r.id AND usuario_id = ?) as deu_like,
         (SELECT COUNT(*) FROM comentarios WHERE review_id = r.id) as total_comentarios
@@ -184,8 +216,9 @@ app.post('/comentarios', (req, res) => {
 // get comentarios (de review especifica)
 app.get('/comentarios/:review_id', (req, res) => {
     const { review_id } = req.params;
+    // Adicionamos o u.avatar_url no SELECT dos comentários
     const sql = `
-        SELECT c.*, u.username 
+        SELECT c.*, u.username, u.avatar_url 
         FROM comentarios c 
         JOIN usuarios u ON c.usuario_id = u.id 
         WHERE c.review_id = ? 
@@ -197,8 +230,6 @@ app.get('/comentarios/:review_id', (req, res) => {
     });
 });
 
-
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
-
-})
+});

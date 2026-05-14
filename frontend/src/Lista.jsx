@@ -156,43 +156,50 @@ export default function Lista(props) {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 text-slate-200 font-sans">
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>Minha Lista de {props.categoria}</h2>
+      {/* CABEÇALHO */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#d946ef] to-[#06b6d4]">
+            Minha Lista de {props.categoria}
+        </h2>
         <button 
           onClick={() => setMostrandoBusca(!mostrandoBusca)} 
-          style={{ padding: '10px 15px', background: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+          className={`px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg ${mostrandoBusca ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-gradient-to-r from-[#9333ea] to-[#6366f1] hover:opacity-90 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)]'}`}
         >
           {mostrandoBusca ? "Cancelar" : "+ Adicionar à Lista"}
         </button>
       </div>
 
+      {/* ÁREA DE BUSCA */}
       {mostrandoBusca && (
-        <div style={{ background: '#1e1e24', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #333' }}>
+        <div className="bg-[#111424] p-6 rounded-2xl mb-8 border border-slate-800 shadow-xl relative z-20">
           <input 
             type="text" 
             placeholder={`Buscar ${props.categoria} para adicionar...`}
             value={busca}
             onChange={(e) => buscarMidia(e.target.value)}
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: 'none', marginBottom: '10px' }}
+            className="w-full bg-[#0b0d17] border border-slate-800 rounded-xl py-3 px-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
           />
 
+          {/* Resultados da busca */}
           {resultados.length > 0 && (
-            <ul style={{ background: '#eee', color: '#000', listStyle: 'none', padding: '0', borderRadius: '4px', overflow: 'hidden', margin: '0' }}>
+            <ul className="absolute top-full left-0 right-0 mt-2 mx-6 bg-[#1e2336] border border-slate-700 rounded-xl overflow-hidden shadow-2xl z-50">
               {resultados.map((item, index) => (
                 <li 
                   key={index} 
-                  style={{ cursor: 'pointer', padding: '10px', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'center', gap: '10px' }}
+                  className="cursor-pointer p-3 border-b border-slate-700/50 flex items-center gap-4 hover:bg-[#2a3047] transition-colors"
                   onClick={() => selecionarParaLista(item)} 
                 >
                   {item.imagem ? (
-                    <img src={item.imagem} alt={item.titulo} style={{ width: '30px', height: '45px', objectFit: 'cover', borderRadius: '4px' }} />
+                    <img src={item.imagem} alt={item.titulo} className="w-10 h-14 object-cover rounded-md flex-shrink-0 shadow-md" />
                   ) : (
-                    <div style={{ width: '30px', height: '45px', background: '#ccc', borderRadius: '4px' }}></div>
+                    <div className="w-10 h-14 bg-slate-700 rounded-md flex-shrink-0"></div>
                   )}
-                  <strong>{item.titulo}</strong>
-                  <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#666' }}>Clique para adicionar</span>
+                  <strong className="font-medium text-slate-200 flex-1">{item.titulo}</strong>
+                  <span className="text-xs font-semibold text-purple-400 bg-purple-400/10 px-3 py-1 rounded-full">
+                    Adicionar +
+                  </span>
                 </li>
               ))}
             </ul>
@@ -200,66 +207,78 @@ export default function Lista(props) {
         </div>
       )}
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', background: '#1e1e24', borderRadius: '8px', overflow: 'hidden' }}>
-        <thead style={{ background: '#333', color: '#fff' }}>
-          <tr>
-            <th style={{ padding: '15px' }}>Capa</th>
-            <th style={{ padding: '15px' }}>Título</th>
-            <th style={{ padding: '15px' }}>Status</th>
-            <th style={{ padding: '15px' }}>Nota</th>
-            <th style={{ padding: '15px', textAlign: 'center' }}>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {itens.length === 0 ? (
-            <tr>
-              <td colSpan="5" style={{ padding: '20px', textAlign: 'center', color: '#888' }}>
-                Sua lista está vazia. Clique no botão acima para adicionar algo!
-              </td>
-            </tr>
-          ) : (
-            itens.map((item) => (
-              <tr key={item.id} style={{ borderBottom: '1px solid #333' }}>
-                <td style={{ padding: '10px 15px' }}>
-                  {item.imagem_url && <img src={item.imagem_url} alt="Capa" style={{ width: '40px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />}
-                </td>
-                <td style={{ padding: '10px 15px', fontWeight: 'bold' }}>{item.titulo}</td>
-                <td style={{ padding: '10px 15px' }}>
-                  <select 
-                    value={item.status_consumo} 
-                    onChange={(e) => atualizarItem(item.id, 'status', e.target.value)}
-                    style={{ padding: '5px', background: '#333', color: 'white', border: '1px solid #555', borderRadius: '4px' }}
-                  >
-                    <option value={props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo'}>
-                      {props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo'}
-                    </option>
-                    <option value="Planejo">Planejo</option>
-                    <option value="Finalizado">Finalizado</option>
-                    <option value="Dropado">Dropado</option>
-                  </select>
-                </td>
-                <td style={{ padding: '10px 15px' }}>
-                  <input 
-                    type="number" 
-                    min="0" max="10" 
-                    value={item.nota_pessoal}
-                    onChange={(e) => atualizarItem(item.id, 'nota', Number(e.target.value))}
-                    style={{ width: '60px', padding: '5px', background: '#333', color: 'white', border: '1px solid #555', borderRadius: '4px' }}
-                  />
-                </td>
-                <td style={{ padding: '10px 15px', textAlign: 'center' }}>
-                  <button 
-                    onClick={() => removerItem(item.id)}
-                    style={{ padding: '5px 10px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                  >
-                    Excluir
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      {/* TABELA DE ITENS */}
+      <div className="bg-[#111424] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+                <thead className="bg-[#1e2336] text-slate-400 text-sm uppercase tracking-wider border-b border-slate-800">
+                    <tr>
+                        <th className="p-4 font-semibold">Capa</th>
+                        <th className="p-4 font-semibold">Título</th>
+                        <th className="p-4 font-semibold">Status</th>
+                        <th className="p-4 font-semibold">Nota</th>
+                        <th className="p-4 font-semibold text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                    {itens.length === 0 ? (
+                        <tr>
+                            <td colSpan="5" className="p-10 text-center text-slate-500 font-medium">
+                                Sua lista está vazia. Clique no botão acima para adicionar algo!
+                            </td>
+                        </tr>
+                    ) : (
+                        itens.map((item) => (
+                        <tr key={item.id} className="hover:bg-[#15192b] transition-colors">
+                            <td className="p-4 w-20">
+                                {item.imagem_url ? (
+                                    <img src={item.imagem_url} alt="Capa" className="w-12 h-16 object-cover rounded-lg shadow-md" />
+                                ) : (
+                                    <div className="w-12 h-16 bg-slate-800 rounded-lg"></div>
+                                )}
+                            </td>
+                            <td className="p-4 font-bold text-slate-200 text-lg">{item.titulo}</td>
+                            <td className="p-4">
+                                <select 
+                                    value={item.status_consumo} 
+                                    onChange={(e) => atualizarItem(item.id, 'status', e.target.value)}
+                                    className="bg-[#0b0d17] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer"
+                                >
+                                    <option value={props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo'}>
+                                    {props.categoria === 'Jogos' ? 'Jogando' : 'Assistindo'}
+                                    </option>
+                                    <option value="Planejo">Planejo</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                    <option value="Dropado">Dropado</option>
+                                </select>
+                            </td>
+                            <td className="p-4">
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        type="number" 
+                                        min="0" max="10" 
+                                        value={item.nota_pessoal}
+                                        onChange={(e) => atualizarItem(item.id, 'nota', Number(e.target.value))}
+                                        className="w-16 bg-[#0b0d17] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-300 focus:outline-none focus:border-purple-500 text-center"
+                                    />
+                                    <span className="text-slate-500 text-sm">/ 10</span>
+                                </div>
+                            </td>
+                            <td className="p-4 text-center">
+                                <button 
+                                    onClick={() => removerItem(item.id)}
+                                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2 mx-auto"
+                                >
+                                    🗑 Excluir
+                                </button>
+                            </td>
+                        </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+      </div>
       
     </div>
   );
