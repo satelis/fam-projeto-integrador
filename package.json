@@ -1,0 +1,26 @@
+{
+  "name": "fam-projeto-integrador",
+  "version": "1.0.0",
+  "description": "**Plataforma integrada para catalogação, avaliação e interação na cultura pop e entretenimento.**",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd project && node server.js",
+    "client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satelis/fam-projeto-integrador.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/satelis/fam-projeto-integrador/issues"
+  },
+  "homepage": "https://github.com/satelis/fam-projeto-integrador#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
