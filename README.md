@@ -30,6 +30,7 @@ A stack tecnológica foi selecionada visando escalabilidade e separação de res
 | :--- | :--- |
 | **Autenticação** | Cadastro e login de usuários com validação de credenciais e chaves únicas. |
 | **Gestão de Reviews** | Publicação de críticas detalhadas vinculadas ao perfil do autor. |
+| **Manutenção de Conteúdos** | Edição dinâmica de publicações permitindo a correção de textos e notas diretamente pelo autor. |
 | **Módulo Social** | Sistema de engajamento permitindo curtidas e comentários em publicações. |
 | **Gestão de Backlog** | Controle de progresso individual (Status: Assistindo, Finalizado, Planejado). |
 | **Avaliação Quantitativa** | Atribuição de notas (0 a 10) com validação de integridade no banco de dados. |
@@ -58,8 +59,8 @@ A arquitetura de dados foi projetada seguindo normas de normalização para gara
 
 O Geek Hub opera com um banco de dados relacional hospedado remotamente na plataforma **Railway**.
 
-* **Acessibilidade:** Os dados são acessíveis de forma segura via porta 29574 para toda a equipe técnica.
-* **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host `shinkansen.proxy.rlwy.net`.
+* **Acessibilidade:** Os dados são acessíveis de forma segura pela toda a equipe técnica.
+* **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host.
 * **Sincronização:** Persistência de dados centralizada, permitindo que a sessão do usuário seja mantida independentemente do hardware utilizado no acesso.
 
 ---
@@ -77,6 +78,7 @@ O Geek Hub opera com um banco de dados relacional hospedado remotamente na plata
 ## Diferenciais do Projeto
 
 * **Arquitetura Cloud-First:** Independência de servidores locais para o armazenamento de dados.
+* **Segurança na Camada de Aplicação:** Verificação de autoria para operações, garantindo que apenas o criador do conteúdo possa realizar modificações nos dados persistidos.
 * **Integridade de Dados:** Regras de negócio aplicadas diretamente no SGBD para prevenir inconsistências.
 * **Modularidade:** Estrutura clara entre as camadas de apresentação e persistência.
 * **Escalabilidade:** Pronto para expansão de volume de dados sem necessidade de reestruturação.
