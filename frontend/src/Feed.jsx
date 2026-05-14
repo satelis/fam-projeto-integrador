@@ -247,6 +247,24 @@
       }
     };
 
+    const deletarReview = async (review_id) => {
+      if (!window.confirm("Tem certeza que deseja deletar esta review?")) return;
+
+      try {
+        const resposta = await fetch(`http://localhost:3000/reviews/${review_id}`, {
+          method: 'DELETE',
+        });
+
+        if (resposta.ok) {
+          buscarReviews(); 
+        } else {
+          alert("Erro ao excluir a review.");
+        }
+      } catch (err) {
+        console.error("Erro ao deletar review:", err);
+      }
+    };
+
     return (
       <div className="feed-container" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
 
@@ -334,7 +352,7 @@
               </h4>
               <p style={{ margin: '0 0 10px 0' }}><strong>Nota:</strong> {review.nota}/10</p>
               
-              {/*EDICAO*/}  
+              {/*EDICAO e EXCLUSAO*/}  
               {editandoId === review.id ? ( 
                 <div style={{ marginBottom: '10px', background: '#1e1e24', padding: '10px', borderRadius: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '8px' }}>
@@ -367,16 +385,25 @@
                   <p style={{ margin: '0' }}>{review.texto}</p>
                   
                   {String(review.usuario_id) === String(localStorage.getItem('usuarioID')) && (
-                    <button 
-                      onClick={() => { 
-                        setEditandoId(review.id); 
-                        setTextoEditado(review.texto);
-                        setNotaEditada(review.nota);
-                      }}
-                      style={{ background: 'none', border: 'none', color: '#007bff', fontSize: '12px', cursor: 'pointer', padding: '5px 0', textDecoration: 'underline' }}
-                    >
-                      ✎ Editar Review
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        onClick={() => { 
+                          setEditandoId(review.id); 
+                          setTextoEditado(review.texto);
+                          setNotaEditada(review.nota);
+                        }}
+                        style={{ background: 'none', border: 'none', color: '#007bff', fontSize: '12px', cursor: 'pointer', padding: '5px 0', textDecoration: 'underline' }}
+                      >
+                        ✎ Editar Review
+                      </button>
+
+                      <button 
+                        onClick={() => deletarReview(review.id)}
+                        style={{ background: 'none', border: 'none', color: '#ff4d4d', fontSize: '12px', cursor: 'pointer', padding: '5px 0', textDecoration: 'underline' }}
+                      >
+                        🗑 Excluir Review
+                      </button>
+                    </div>
                   )}
                 </div>
               )}

@@ -95,6 +95,24 @@ app.put('/reviews/:id', (req, res) => {
     });
 });
 
+//delete post
+app.delete('/reviews/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "DELETE FROM reviews WHERE id = ?";
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error("ERRO AO DELETAR REVIEW:", err.message);
+            return res.status(500).json({ sucesso: false, erro: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ sucesso: false, mensagem: "Review não encontrada." });
+        }
+
+        res.json({ sucesso: true, mensagem: "Review deletada com sucesso." });
+    });
+});
 
 //post de listas
 app.post('/lista', (req, res) => {
