@@ -257,9 +257,15 @@ export default function Lista(props) {
                                     <input 
                                         type="number" 
                                         min="0" max="10" 
-                                        value={item.nota_pessoal}
-                                        onChange={(e) => atualizarItem(item.id, 'nota', Number(e.target.value))}
-                                        className="w-16 bg-[#0b0d17] border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-300 focus:outline-none focus:border-purple-500 text-center"
+                                        value={item.nota_pessoal ?? 0}
+                                        onChange={(e) => {
+                                            const valor = e.target.value;
+                                            // validação
+                                            const notaValidada = valor === '' ? 0 : Number(valor);
+                                            if (notaValidada >= 0 && notaValidada <= 10) {
+                                                atualizarItem(item.id, 'nota', notaValidada);
+                                            }
+                                        }}
                                     />
                                     <span className="text-slate-500 text-sm">/ 10</span>
                                 </div>

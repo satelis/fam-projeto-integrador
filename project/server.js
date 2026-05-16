@@ -161,6 +161,40 @@ app.post('/lista', (req, res) => {
     });
 });
 
+// put de listas
+app.put('/lista/:id', (req, res) => {
+    const { id } = req.params;
+    const { status_consumo, nota_pessoal } = req.body;
+    
+    const sql = "UPDATE minhas_listas SET status_consumo = ?, nota_pessoal = ? WHERE id = ?";
+    
+    db.query(sql, [status_consumo, nota_pessoal, id], (err, result) => {
+        if (err) {
+            console.error("Erro ao atualizar lista no banco:", err.message);
+            return res.status(500).json({ sucesso: false, erro: err.message });
+        }
+        res.json({ sucesso: true, mensagem: "Item da lista atualizado." });
+    });
+});
+
+// delete de listas
+app.delete('/lista/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = "DELETE FROM minhas_listas WHERE id = ?";
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error("ERRO AO REMOVER ITEM DA LISTA:", err.message);
+            return res.status(500).json({ sucesso: false, erro: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ sucesso: false, mensagem: "Item não encontrado." });
+        }
+
+        res.json({ sucesso: true, mensagem: "Item removido da lista." });
+    });
+});
+
 // get de listas
 app.get('/lista/:usuario_id/:categoria', (req, res) => {
     const { usuario_id, categoria } = req.params;
