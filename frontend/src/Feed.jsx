@@ -413,8 +413,26 @@ export default function Feed(props) {
 
                             {/* LIKES e CONTAGEM COMENTARIOS */}
                             <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-6">
-                                <button onClick={() => darLike(review.id)} className={`flex items-center gap-2 text-lg font-medium transition-colors ${review.deu_like > 0 ? 'text-red-500' : 'text-slate-500'}`}>❤ <span className="text-sm">{review.total_likes || 0}</span></button>
-                                <div className="flex items-center gap-2 text-slate-500"><span className="text-lg">🗨</span> <span className="text-sm font-medium">{review.total_comentarios || 0}</span></div>
+                                <button 
+                                    onClick={() => darLike(review.id)}
+                                    className={`flex items-center gap-2 text-lg font-medium transition-colors ${review.deu_like > 0 ? 'text-red-500' : 'text-slate-500 hover:text-red-400'}`}
+                                >
+                                    {review.deu_like > 0 ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
+                                    )}
+                                    <span className="text-sm">{review.total_likes || 0}</span>
+                                </button>
+                                
+                                <div className="flex items-center gap-2 text-slate-500">
+                                    <span className="text-lg">🗨</span> 
+                                    <span className="text-sm font-medium">{review.total_comentarios || 0}</span>
+                                </div>
                             </div>
 
                             {/* COMENTARIOS */}
