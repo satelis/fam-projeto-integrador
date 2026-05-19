@@ -76,6 +76,7 @@ export default function Feed(props) {
             //sempre limpa o comentario ao fazer um novo, e recarrega a pagina para que mostre o novo comentario
             setTextoComentarios(prev => ({ ...prev, [review_id]: "" })); 
             carregarComentarios(review_id);
+            buscarReviews();
         } catch (err) {
             console.error("Erro ao postar:", err);
         }
@@ -400,14 +401,42 @@ export default function Feed(props) {
                                 Nota: {review.nota}/10
                             </div>
                             
+                            {/* TEXTO DA REVIEW E BOTÕES DE EDIÇÃO */}
                             <div className="mb-4">
-                                <p className="text-slate-300 leading-relaxed text-sm md:text-base mb-3">{review.texto}</p>
-                                
-                                {String(review.usuario_id) === String(localStorage.getItem('usuarioID')) && (
-                                    <div className="flex gap-4 mt-2">
-                                        <button onClick={() => { setEditandoId(review.id); setTextoEditado(review.texto); setNotaEditada(review.nota); }} className="text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1 transition-colors">✎ Editar</button>
-                                        <button onClick={() => deletarReview(review.id)} className="text-red-400 hover:text-red-300 text-sm flex items-center gap-1 transition-colors">🗑 Excluir</button>
+                                {editandoId === review.id ? (
+                                    <div className="flex flex-col gap-3 mt-2 bg-[#1e2336] p-4 rounded-xl border border-slate-700">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm text-purple-300 font-bold">Nova Nota:</span>
+                                            <input 
+                                                type="number" 
+                                                value={notaEditada} 
+                                                onChange={(e) => setNotaEditada(e.target.value)} 
+                                                min="0" max="10"
+                                                className="w-20 bg-[#0b0d17] border border-slate-600 rounded-lg py-1 px-2 text-slate-200 focus:outline-none focus:border-purple-500"
+                                            />
+                                        </div>
+                                        <textarea 
+                                            value={textoEditado} 
+                                            onChange={(e) => setTextoEditado(e.target.value)} 
+                                            rows="3"
+                                            className="w-full bg-[#0b0d17] border border-slate-600 rounded-lg py-2 px-3 text-slate-200 focus:outline-none focus:border-purple-500 resize-y"
+                                        />
+                                        <div className="flex gap-3 mt-2">
+                                            <button onClick={() => atualizarReview(review.id)} className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors shadow-lg">Salvar</button>
+                                            <button onClick={() => setEditandoId(null)} className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors">Cancelar</button>
+                                        </div>
                                     </div>
+                                ) : (
+                                    <>
+                                        <p className="text-slate-300 leading-relaxed text-sm md:text-base mb-3">{review.texto}</p>
+                                        
+                                        {String(review.usuario_id) === String(localStorage.getItem('usuarioID')) && (
+                                            <div className="flex gap-4 mt-2">
+                                                <button onClick={() => { setEditandoId(review.id); setTextoEditado(review.texto); setNotaEditada(review.nota); }} className="text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1 transition-colors">✎ Editar</button>
+                                                <button onClick={() => deletarReview(review.id)} className="text-red-400 hover:text-red-300 text-sm flex items-center gap-1 transition-colors">🗑 Excluir</button>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
 
