@@ -1,6 +1,6 @@
 # Projeto Integrador - FAM 🌍
 
-# Geek Hub
+# GeekHub
 
 **Plataforma integrada para catalogação, avaliação e interação na cultura pop e entretenimento.**
 
@@ -8,7 +8,7 @@
 
 ## Descrição do Projeto
 
-O **Geek Hub** é um sistema de gerenciamento de informações e rede social planejado para o nicho de entretenimento, abrangendo animes, games, filmes e séries. A aplicação permite que usuários cataloguem conteúdos, registrem seu progresso de consumo e interajam através de avaliações e comentários.
+O **GeekHub** é um sistema de gerenciamento de informações e rede social planejado para o nicho de entretenimento, abrangendo animes, games, filmes e séries. A aplicação permite que usuários cataloguem conteúdos, registrem seu progresso de consumo e interajam através de avaliações e comentários.
 
 O sistema resolve a problemática da volatilidade de dados em aplicações baseadas apenas em cache de navegador, substituindo o armazenamento local (LocalStorage) por uma arquitetura robusta de banco de dados relacional. Isso garante a persistência das informações, segurança e a integridade das interações em um ambiente multiusuário.
 
@@ -57,7 +57,7 @@ A arquitetura de dados foi projetada seguindo normas de normalização para gara
 
 ## Integração e Armazenamento em Nuvem
 
-O Geek Hub opera com um banco de dados relacional hospedado remotamente na plataforma **Railway**.
+O GeekHub opera com um banco de dados relacional hospedado remotamente na plataforma **Railway**.
 
 * **Acessibilidade:** Os dados são acessíveis de forma segura pela toda a equipe técnica.
 * **Segurança de Conexão:** Gestão de credenciais protegida por variáveis de ambiente (.env), ocultando detalhes sensíveis do host.
