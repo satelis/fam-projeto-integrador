@@ -12,12 +12,13 @@ O **GeekHub** é um sistema de gerenciamento de informações e rede social plan
 
 O sistema resolve a problemática da volatilidade de dados em aplicações baseadas apenas em cache de navegador, substituindo o armazenamento local (LocalStorage) por uma arquitetura robusta de banco de dados relacional. Isso garante a persistência das informações, segurança e a integridade das interações em um ambiente multiusuário.
 
-<img width="1892" height="1020" alt="image" src="https://github.com/user-attachments/assets/1f618420-e63d-4158-a94a-e97cb276ce19" />
-<img width="1892" height="1017" alt="image" src="https://github.com/user-attachments/assets/514bc22c-a028-4117-a389-a9d4e7b084ec" />
-<img width="1865" height="1027" alt="image" src="https://github.com/user-attachments/assets/13b0777e-318c-43ca-9fc7-62708289a64d" />
-<img width="1897" height="1002" alt="image" src="https://github.com/user-attachments/assets/9c7d1fad-a838-4879-94cf-5f61d550eb86" />
-<img width="1912" height="1022" alt="image" src="https://github.com/user-attachments/assets/96a7bea6-14cb-428e-a219-082846041257" />
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/13b0777e-318c-43ca-9fc7-62708289a64d" width="30%" />
+  <img src="https://github.com/user-attachments/assets/1f618420-e63d-4158-a94a-e97cb276ce19" width="30%" />
+  <img src="https://github.com/user-attachments/assets/514bc22c-a028-4117-a389-a9d4e7b084ec" width="30%" />
+  <img src="https://github.com/user-attachments/assets/9c7d1fad-a838-4879-94cf-5f61d550eb86" width="30%" />
+  <img src="https://github.com/user-attachments/assets/96a7bea6-14cb-428e-a219-082846041257" width="30%" />
+</div>
 ---
 
 ## Tecnologias Utilizadas
